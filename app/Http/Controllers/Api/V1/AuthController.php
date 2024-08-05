@@ -12,7 +12,7 @@ use App\Http\Requests\Api\RegisterRequest;
 
 class AuthController extends Controller
 {
-    public function register(RegisterRequest $request) {
+    public function register(Request $request) {
         DB::beginTransaction();
         logger($request->name);
         try {
