@@ -14,7 +14,7 @@ class AuthController extends Controller
 {
     public function register(RegisterRequest $request) {
         DB::beginTransaction();
-
+        logger($request->name);
         try {
             $user = new User();
             $user->name = $request->name;
