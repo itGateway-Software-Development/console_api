@@ -18,6 +18,8 @@ use Illuminate\Support\Facades\Route;
 Route::post('/v1/register', [AuthController::class, 'register']);
 Route::post('/v1/login', [AuthController::class, 'login']);
 
+Route::post('/v1/verify-email', [AuthController::class, 'verifyEmail']);
+
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });

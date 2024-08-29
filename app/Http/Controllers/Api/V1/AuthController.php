@@ -3,10 +3,12 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Models\User;
+use App\Mail\OTPMail;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
 use App\Http\Requests\Api\LoginRequest;
 use App\Http\Requests\Api\RegisterRequest;
 
@@ -14,25 +16,26 @@ class AuthController extends Controller
 {
     public function register(RegisterRequest $request) {
         DB::beginTransaction();
-
         try {
+
+            $otp = random_int(100000, 999999);
             $user = new User();
             $user->name = $request->name;
             $user->email = $request->email;
-            $user->phone = $request->phone;
             $user->password = Hash::make($request->password);
-            $user->birthday = $request->birthday;
-            $user->address = $request->address;
+            $user->email_otp = $otp;
             $user->save();
 
-            $token = $user->createToken('romanticunderwear')->plainTextToken;
+            $token = $user->createToken('itGateway')->plainTextToken;
 
 
             $response = [
-                'message' => 'success',
+                'status' => 'success',
                 'user' => $user,
                 'token' => $token
             ];
+
+            Mail::to($request->email)->send(new OTPMail($otp));
 
             DB::commit();
 
@@ -47,6 +50,7 @@ class AuthController extends Controller
 
     public function login(LoginRequest $request) {
         $user = User::where('email', $request->input('email'))->first();
+        $otp = random_int(100000, 999999);
 
         if(!$user || !Hash::check($request->input('password'), $user->password)) {
             return response()->json(['message' => 'wrong credentials'], 401);
@@ -56,11 +60,39 @@ class AuthController extends Controller
 
 
         $response = [
-            'message' => 'success',
+            'status' => 'success',
             'user' => $user,
             'token' => $token
         ];
 
+        if(is_null($user->email_verified_at)) {
+            $user->email_otp = $otp;
+            $user->update();
+
+            Mail::to($request->email)->send(new OTPMail($otp));
+
+            return response()->json(['status' => 'not_verify', 'message' => 'Please Verify Your Email', 'user' => $user, 'token' => $token]);
+        }
+
         return response()->json([...$response], 201);
+    }
+
+    public function verifyEmail(Request $request) {
+       if($request->id) {
+            $user = User::find($request->id);
+
+            if($user) {
+                if($user->email_otp == $request->input_otp) {
+                    $user->email_verified_at = now();
+                    $user->update();
+
+                    return response()->json(['status' => 'success', 'message' => 'Email verified successfully']);
+                } else {
+                    return response()->json(['status' => 'error', 'message' => 'Wrong OTP. Please try again !']);
+                }
+            }
+       } else {
+            return response()->json(['status' => 'error', 'message' => 'Credential wrong !']);
+       }
     }
 }
