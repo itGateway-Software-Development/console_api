@@ -15,9 +15,9 @@ class CheckApiToken
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if(!$request->has('token')) {
+        if(!$request->has('api_token')) {
             return response()->json(['message' => "Api token is required!"], 401);
-        } else if($request->token !== env('API_TOKEN')) {
+        } else if($request->api_token !== env('API_TOKEN')) {
             return response()->json(['message' => "Api token is not correct!"], 401);
         }
         return $next($request);
