@@ -35,7 +35,7 @@ class AuthController extends Controller
                 'token' => $token
             ];
 
-            Mail::to($request->email)->send(new OTPMail($otp));
+            Mail::to($request->email)->send(new OTPMail($otp, 'email_verify'));
 
             DB::commit();
 
@@ -69,7 +69,7 @@ class AuthController extends Controller
             $user->email_otp = $otp;
             $user->update();
 
-            Mail::to($request->email)->send(new OTPMail($otp));
+            Mail::to($request->email)->send(new OTPMail( $otp, 'email_verify'));
 
             return response()->json(['status' => 'not_verify', 'message' => 'Please Verify Your Email', 'user' => $user, 'token' => $token]);
         }
