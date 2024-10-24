@@ -1,21 +1,23 @@
 <?php
 
-namespace App\Http\Controllers\Api\V1;
+namespace App\Modules\Auth\Controllers\Api\V1;
 
-use App\Models\User;
 use App\Mail\OTPMail;
 use Illuminate\Http\Request;
+use App\Modules\User\Models\User;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
-use App\Http\Requests\Api\LoginRequest;
-use App\Http\Requests\Api\RegisterRequest;
+use App\Modules\Auth\Requests\LoginRequest;
+use App\Modules\Auth\Requests\RegisterRequest;
 
 class AuthController extends Controller
 {
     public function register(RegisterRequest $request) {
         DB::beginTransaction();
+        logger($request->all());
+
         try {
 
             $otp = random_int(100000, 999999);
@@ -49,6 +51,7 @@ class AuthController extends Controller
     }
 
     public function login(LoginRequest $request) {
+        logger($request->all());
         $user = User::where('email', $request->input('email'))->first();
         $otp = random_int(100000, 999999);
 
@@ -57,7 +60,6 @@ class AuthController extends Controller
         }
 
         $token = $user->createToken('romanticunderwear')->plainTextToken;
-
 
         $response = [
             'status' => 'success',

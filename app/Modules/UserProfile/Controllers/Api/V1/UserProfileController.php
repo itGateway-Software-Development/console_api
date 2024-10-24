@@ -1,18 +1,18 @@
 <?php
 
-namespace App\Http\Controllers\Api\V1;
+namespace App\Modules\UserProfile\Controllers\Api\V1;
 
-use App\Models\User;
 use App\Mail\OTPMail;
 use Illuminate\Http\Request;
+use App\Modules\User\Models\User;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
-use App\Http\Requests\Api\UserRequest;
+use App\Modules\UserProfile\Requests\UserProfileRequest;
 
-class UserController extends Controller
+class UserProfileController extends Controller
 {
-    public function updateProfile(UserRequest $request) {
+    public function updateProfile(UserProfileRequest $request) {
         if($request->id && User::find($request->id)) {
             $user = User::find($request->id);
             $user->name = $request->name;

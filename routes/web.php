@@ -17,4 +17,14 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+Route::get('/run-script', function() {
+
+    // dynamic
+    $cpu = '8 Core';
+    $os = 'Ubuntu';
+
+    $output = shell_exec('sh /home/ken/Downloads/run.sh 2>&1');
+    return response()->json(['output' => $output]);
+});
+
 // jg
