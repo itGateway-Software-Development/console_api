@@ -38,7 +38,6 @@ class ServerTypeController extends Controller
 
     public function destroy(ServerType $serverType)
     {
-
         $serverType->delete();
 
         return response()->json(['status' => 'success', 'message' => 'Successfully deleted!']);
