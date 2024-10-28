@@ -51,7 +51,6 @@ class AuthController extends Controller
     }
 
     public function login(LoginRequest $request) {
-        logger($request->all());
         $user = User::where('email', $request->input('email'))->first();
         $otp = random_int(100000, 999999);
 
@@ -96,5 +95,14 @@ class AuthController extends Controller
        } else {
             return response()->json(['status' => 'error', 'message' => 'Credential wrong !']);
        }
+    }
+
+    public function checkAuth(Request $request) {
+        $user = User::where('email', $request->email)->first();
+        if($user) {
+            return response()->json(['status' => 'success', 'message' => 'Authorized']);
+        } else {
+            return response()->json(['status' => 'error', 'message' => 'Unauthorized']);
+        }
     }
 }
