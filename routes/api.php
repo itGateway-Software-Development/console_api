@@ -6,7 +6,7 @@ Route::get('/v1/run-script', function() {
     $cpu = '8 Core';
     $os = 'Ubuntu';
 
-    $output = shell_exec('sudo /home/itg/deploy.sh 2>&1');
+    $output = shell_exec('sh /home/itg/deploy.sh 2>&1');
     return response()->json(['output' => $output]);
 });
 require_once base_path('app/Modules/Auth/Routes/api.php');
