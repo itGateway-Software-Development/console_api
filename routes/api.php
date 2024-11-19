@@ -1,45 +1,76 @@
 <?php
 
 use Symfony\Component\Process\Process;
+use Symfony\Component\HttpFoundation\Response;
 
 Route::get('/v1/run-script', function() {
     // $scriptPath = '/home/ken/Documents/scripts/run.sh';
     $scriptPath = '/home/itg/deploy.sh';
 
-    $process = new Process(['sh', $scriptPath]);
-    $process->run();
+    try {
+        // Initialize and configure the process
+        $process = new Process(['sh', $scriptPath]);
+        $process->setTimeout(300);
 
-    if ($process->isSuccessful()) {
-        $output = $process->getOutput();
+        // Run the process
+        $process->run();
 
-        $data = json_decode($output, true);
+        // Check if the process executed successfully
+        if ($process->isSuccessful()) {
+            $output = $process->getOutput();
 
-        if ($data && isset($data['ip']) && isset($data['server'])) {
-            $ip = $data['ip'];
-            $server = $data['server'];
+            // Attempt to parse JSON output
+            $data = json_decode($output, true);
 
-            return response()->json([
-                'status' => 'success',
-                'ip' => $ip,
-                'server' => $server,
-                'message' => 'Script executed successfully and values retrieved.'
-            ]);
+            if (json_last_error() === JSON_ERROR_NONE && isset($data['ip'], $data['server'])) {
+                logger('IP: ' . $data['ip']);
+                logger('Server: ' . $data['server']);
+
+                return response()->json([
+                    'status' => 'success',
+                    'ip' => $data['ip'],
+                    'server' => $data['server'],
+                    'message' => 'Script executed successfully and values retrieved.'
+                ], Response::HTTP_OK);
+            } else {
+                // JSON parsing failed or required keys are missing
+                logger('Invalid script output: ' . $output);
+
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Failed to parse script output. Ensure the script returns valid JSON.'
+                ], Response::HTTP_INTERNAL_SERVER_ERROR);
+            }
         } else {
+            // Handle process execution failure
+            $errorOutput = $process->getErrorOutput();
+            logger('Script error: ' . $errorOutput);
+
             return response()->json([
                 'status' => 'error',
-                'message' => 'Failed to parse script output.'
-            ]);
+                'error' => $errorOutput,
+                'message' => 'Script execution failed.'
+            ], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
-    } else {
-        $errorOutput = $process->getErrorOutput();
+    } catch (\Symfony\Component\Process\Exception\ProcessTimedOutException $e) {
+        // Handle script timeout
+        logger('Script timed out: ' . $e->getMessage());
 
         return response()->json([
             'status' => 'error',
-            'error' => $errorOutput,
-            'message' => 'Script execution failed.'
-        ]);
+            'message' => 'Script execution timed out.'
+        ], Response::HTTP_GATEWAY_TIMEOUT);
+    } catch (\Exception $e) {
+        // Handle other unexpected exceptions
+        logger('Unexpected error: ' . $e->getMessage());
+
+        return response()->json([
+            'status' => 'error',
+            'message' => 'An unexpected error occurred while running the script.'
+        ], Response::HTTP_INTERNAL_SERVER_ERROR);
     }
 });
+
 require_once base_path('app/Modules/Auth/Routes/api.php');
 require_once base_path('app/Modules/UserProfile/Routes/api.php');
 require_once base_path('app/Modules/ServerManagement/Location/Routes/api.php');
