@@ -30,6 +30,7 @@ Route::get('/v1/run-script', function() {
                     'status' => 'success',
                     'ip' => $data['ip'],
                     'server' => $data['server'],
+                    'data' => $data,
                     'message' => 'Script executed successfully and values retrieved.'
                 ], Response::HTTP_OK);
             } else {
@@ -38,6 +39,7 @@ Route::get('/v1/run-script', function() {
 
                 return response()->json([
                     'status' => 'error',
+                    'data' => $data,
                     'output' => $output,
                     'message' => 'Failed to parse script output. Ensure the script returns valid JSON.'
                 ], Response::HTTP_INTERNAL_SERVER_ERROR);
