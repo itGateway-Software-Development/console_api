@@ -7,6 +7,7 @@ Route::get('/v1/run-script', function() {
 
     // $scriptPath = '/home/ken/Documents/scripts/run.sh';
     $scriptPath = '/home/itg/deploy.sh';
+
     try {
         // Initialize and configure the process
         $process = new Process(['sh', $scriptPath]);
