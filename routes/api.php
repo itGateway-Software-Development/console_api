@@ -27,6 +27,7 @@ Route::get('/v1/run-script', function() {
                         'ip_address' => $data['ip_address'],
                         'server_type' => $data['server_type'],
                         'data' => $data,
+                        'output' => $output,
                         'message' => 'Script executed successfully and values retrieved.',
                     ], Response::HTTP_OK);
                 }
@@ -35,6 +36,7 @@ Route::get('/v1/run-script', function() {
             // If JSON parsing fails, return the raw output for debugging
             return response()->json([
                 'status' => 'error',
+                'output' => $output,
                 'message' => 'Failed to parse script output. Ensure the script returns valid JSON.'
             ], Response::HTTP_INTERNAL_SERVER_ERROR);
 
