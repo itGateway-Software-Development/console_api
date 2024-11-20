@@ -22,11 +22,12 @@ Route::get('/v1/run-script', function() {
             // Attempt to extract JSON from the last part of the output
             if (preg_match('/\{.*\}$/s', $output, $matches)) {
                 $data = json_decode($matches[0], true);
-                if ($data && isset($data['htoo'], $data['server'])) {
+                if ($data && isset($data['mac_address'], $data['ip_address'], $data['server_type'])) {
                     return response()->json([
                         'status' => 'success',
-                        'ip' => $data['htoo'],
-                        'server' => $data['server'],
+                        'mac_address' => $data['mac_address'],
+                        'ip_address' => $data['ip_address'],
+                        'server_type' => $data['server_type'],
                         'data' => $data,
                         'message' => 'Script executed successfully and values retrieved.',
                         'output' => $output
