@@ -28,7 +28,8 @@ Route::get('/v1/run-script', function() {
                         'ip' => $data['htoo'],
                         'server' => $data['server'],
                         'data' => $data,
-                        'message' => 'Script executed successfully and values retrieved.'
+                        'message' => 'Script executed successfully and values retrieved.',
+                        'output' => $output
                     ], Response::HTTP_OK);
                 }
             }
