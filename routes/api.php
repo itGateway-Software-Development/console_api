@@ -22,7 +22,6 @@ Route::get('/v1/run-script', function() {
             // Attempt to extract JSON from the last part of the output
             if (preg_match('/\{.*\}$/s', $output, $matches)) {
                 $data = json_decode($matches[0], true);
-                return response()->json(['data' => $data]);
                 if ($data && isset($data['mac_address'], $data['ip_address'], $data['server_type'])) {
                     return response()->json([
                         'status' => 'success',
