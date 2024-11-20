@@ -19,31 +19,26 @@ Route::get('/v1/run-script', function() {
         if ($process->isSuccessful()) {
             $output = $process->getOutput();
 
-            // Attempt to parse JSON output
-            $data = json_decode($output, true);
-
-            if (isset($data['ip'], $data['server'])) {
-                logger('IP: ' . $data['ip']);
-                logger('Server: ' . $data['server']);
-
-                return response()->json([
-                    'status' => 'success',
-                    'ip' => $data['ip'],
-                    'server' => $data['server'],
-                    'data' => $data,
-                    'message' => 'Script executed successfully and values retrieved.'
-                ], Response::HTTP_OK);
-            } else {
-                // JSON parsing failed or required keys are missing
-                logger('Invalid script output: ' . $output);
-
-                return response()->json([
-                    'status' => 'error',
-                    'data' => $data,
-                    'output' => $output,
-                    'message' => 'Failed to parse script output. Ensure the script returns valid JSON.'
-                ], Response::HTTP_INTERNAL_SERVER_ERROR);
+            // Attempt to extract JSON from the last part of the output
+            if (preg_match('/\{.*\}$/s', $output, $matches)) {
+                $data = json_decode($matches[0], true);
+                if ($data && isset($data['ip'], $data['server'])) {
+                    return response()->json([
+                        'status' => 'success',
+                        'ip' => $data['ip'],
+                        'server' => $data['server'],
+                        'data' => $data,
+                        'message' => 'Script executed successfully and values retrieved.'
+                    ], Response::HTTP_OK);
+                }
             }
+
+            return response()->json([
+                'status' => 'error',
+                'output' => $output,
+                'message' => 'Failed to parse script output. Ensure the script returns valid JSON.'
+            ], Response::HTTP_INTERNAL_SERVER_ERROR);
+
         } else {
             // Handle process execution failure
             $errorOutput = $process->getErrorOutput();
