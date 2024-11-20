@@ -15,11 +15,13 @@ Route::get('/v1/run-script', function() {
         // Run the process
         $process->run();
 
-        // Check if the process executed successfully
         if ($process->isSuccessful()) {
             $output = $process->getOutput();
 
-            // Attempt to extract JSON from the last part of the output
+            // Log the entire output for debugging
+            logger('Process output: ' . $output);
+
+            // Attempt to extract JSON from the output
             if (preg_match('/\{.*\}$/s', $output, $matches)) {
                 $data = json_decode($matches[0], true);
                 if ($data && isset($data['mac_address'], $data['ip_address'], $data['server_type'])) {
@@ -35,6 +37,7 @@ Route::get('/v1/run-script', function() {
                 }
             }
 
+            // If JSON parsing fails, return the raw output for debugging
             return response()->json([
                 'status' => 'error',
                 'output' => $output,
@@ -52,6 +55,7 @@ Route::get('/v1/run-script', function() {
                 'message' => 'Script execution failed.'
             ], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
+
     } catch (\Symfony\Component\Process\Exception\ProcessTimedOutException $e) {
         // Handle script timeout
         logger('Script timed out: ' . $e->getMessage());
