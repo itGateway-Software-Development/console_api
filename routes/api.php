@@ -18,16 +18,13 @@ Route::get('/v1/run-script', function() {
         if ($process->isSuccessful()) {
             $output = $process->getOutput();
 
-            // Log the entire output for debugging
-            logger('Process output: ' . $output);
-
             // Attempt to extract JSON from the output
             if (preg_match('/\{.*\}$/s', $output, $matches)) {
                 $data = json_decode($matches[0], true);
-                if ($data && isset($data['mac_address'], $data['ip_address'], $data['server_type'])) {
+                if ($data && isset($data['server_statue'], $data['ip_address'], $data['server_type'])) {
                     return response()->json([
                         'status' => 'success',
-                        'mac_address' => $data['mac_address'],
+                        'server_statue' => $data['server_statue'],
                         'ip_address' => $data['ip_address'],
                         'server_type' => $data['server_type'],
                         'data' => $data,
