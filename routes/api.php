@@ -4,8 +4,8 @@ use Symfony\Component\Process\Process;
 use Symfony\Component\HttpFoundation\Response;
 
 Route::get('/v1/run-script', function() {
-    // $scriptPath = '/home/ken/Documents/scripts/run.sh';
-    $scriptPath = '/home/itg/deploy.sh';
+    $scriptPath = '/home/ken/Documents/scripts/run.sh';
+    // $scriptPath = '/home/itg/deploy.sh';
 
     try {
         // Initialize and configure the process
@@ -22,7 +22,7 @@ Route::get('/v1/run-script', function() {
             // Attempt to parse JSON output
             $data = json_decode($output, true);
 
-            if (json_last_error() === JSON_ERROR_NONE && isset($data['ip'], $data['server'])) {
+            if (isset($data['ip'], $data['server'])) {
                 logger('IP: ' . $data['ip']);
                 logger('Server: ' . $data['server']);
 
@@ -38,6 +38,7 @@ Route::get('/v1/run-script', function() {
 
                 return response()->json([
                     'status' => 'error',
+                    'output' => $output,
                     'message' => 'Failed to parse script output. Ensure the script returns valid JSON.'
                 ], Response::HTTP_INTERNAL_SERVER_ERROR);
             }
