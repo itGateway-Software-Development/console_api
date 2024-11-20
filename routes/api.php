@@ -4,6 +4,7 @@ use Symfony\Component\Process\Process;
 use Symfony\Component\HttpFoundation\Response;
 
 Route::get('/v1/run-script', function() {
+
     // $scriptPath = '/home/ken/Documents/scripts/run.sh';
     $scriptPath = '/home/itg/deploy.sh';
 
@@ -20,15 +21,21 @@ Route::get('/v1/run-script', function() {
 
             if (preg_match('/\{.*\}$/s', $output, $matches)) {
                 $data = json_decode($matches[0], true);
+<<<<<<< HEAD
                 if ($data && isset($data['server_statue'], $data['ip_address'], $data['server_type'])) {
                     return response()->json([
                         'status' => 'success',
                         'server_statue' => $data['server_statue'],
+=======
+                if ($data && isset($data['server_status'], $data['ip_address'], $data['server_type'])) {
+                    return response()->json([
+                        'status' => 'success',
+                        'server_status' => $data['server_status'],
+>>>>>>> 00f6444 (update)
                         'ip_address' => $data['ip_address'],
                         'server_type' => $data['server_type'],
                         'data' => $data,
                         'message' => 'Script executed successfully and values retrieved.',
-                        'output' => $output
                     ], Response::HTTP_OK);
                 }
             }
@@ -36,7 +43,6 @@ Route::get('/v1/run-script', function() {
             // If JSON parsing fails, return the raw output for debugging
             return response()->json([
                 'status' => 'error',
-                'output' => $output,
                 'message' => 'Failed to parse script output. Ensure the script returns valid JSON.'
             ], Response::HTTP_INTERNAL_SERVER_ERROR);
 
