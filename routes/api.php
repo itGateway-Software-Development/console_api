@@ -7,8 +7,8 @@ use Symfony\Component\HttpFoundation\Response;
 
 Route::get('/v1/run-script', function() {
 
-    $scriptPath = '/home/ken/Documents/scripts/run.sh';
-    // $scriptPath = '/home/itg/deploy.sh';
+    // $scriptPath = '/home/ken/Documents/scripts/run.sh';
+    $scriptPath = '/home/itg/deploy.sh';
     try {
         // Initialize and configure the process
         $process = new Process(['sh', $scriptPath]);
@@ -25,7 +25,7 @@ Route::get('/v1/run-script', function() {
                 if ($data && isset($data['server_status'], $data['ip_address'], $data['server_type'])) {
                     $deployServer = new DeployServer();
                     $deployServer->server_type = $data['server_type'];
-                    $deployServer->server_status = $data['server_status'];
+                    $deployServer->server_status = $data['server_status'] == "status: running" ? "Running" : "Stopped";
                     $deployServer->ip = $data['ip_address'];
                     $deployServer->save();
 
