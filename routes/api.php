@@ -1,12 +1,14 @@
 <?php
 
+use App\DeployServer;
+use App\Http\Resources\DeployServerResource;
 use Symfony\Component\Process\Process;
 use Symfony\Component\HttpFoundation\Response;
 
 Route::get('/v1/run-script', function() {
 
-    // $scriptPath = '/home/ken/Documents/scripts/run.sh';
-    $scriptPath = '/home/itg/deploy.sh';
+    $scriptPath = '/home/ken/Documents/scripts/run.sh';
+    // $scriptPath = '/home/itg/deploy.sh';
     try {
         // Initialize and configure the process
         $process = new Process(['sh', $scriptPath]);
@@ -21,13 +23,19 @@ Route::get('/v1/run-script', function() {
             if (preg_match('/\{.*\}$/s', $output, $matches)) {
                 $data = json_decode($matches[0], true);
                 if ($data && isset($data['server_status'], $data['ip_address'], $data['server_type'])) {
+                    $deployServer = new DeployServer();
+                    $deployServer->server_type = $data['server_type'];
+                    $deployServer->server_status = $data['server_status'];
+                    $deployServer->ip = $data['ip_address'];
+                    $deployServer->save();
+
                     return response()->json([
                         'status' => 'success',
                         'server_status' => $data['server_status'],
                         'ip_address' => $data['ip_address'],
                         'server_type' => $data['server_type'],
-                        'data' => $data,
-                        'output' => $output,
+                        // 'data' => $data,
+                        // 'output' => $output,
                         'message' => 'Script executed successfully and values retrieved.',
                     ], Response::HTTP_OK);
                 }
@@ -38,7 +46,7 @@ Route::get('/v1/run-script', function() {
                 'status' => 'error',
                 'output' => $output,
                 'message' => 'Failed to parse script output. Ensure the script returns valid JSON.'
-            ], Response::HTTP_INTERNAL_SERVER_ERROR);
+            ]);
 
         } else {
             // Handle process execution failure
@@ -65,10 +73,16 @@ Route::get('/v1/run-script', function() {
         logger('Unexpected error: ' . $e->getMessage());
 
         return response()->json([
-            'status' => 'error',
-            'message' => 'An unexpected error occurred while running the script.'
+            'status' => 'script error',
+            'message' => $e->getMessage()
         ], Response::HTTP_INTERNAL_SERVER_ERROR);
     }
+});
+
+Route::get('/v1/deploy-servers', function() {
+    $servers = DeployServer::all();
+
+    return response()->json(['status' => 'success', 'deploy_servers' => DeployServerResource::collection($servers)]);
 });
 
 require_once base_path('app/Modules/Auth/Routes/api.php');
