@@ -1,8 +1,9 @@
 <?php
 
 use App\DeployServer;
-use App\Http\Resources\DeployServerResource;
+use Illuminate\Http\Request;
 use Symfony\Component\Process\Process;
+use App\Http\Resources\DeployServerResource;
 use Symfony\Component\HttpFoundation\Response;
 
 Route::get('/v1/run-script', function() {
@@ -83,6 +84,17 @@ Route::get('/v1/deploy-servers', function() {
     $servers = DeployServer::all();
 
     return response()->json(['status' => 'success', 'deploy_servers' => DeployServerResource::collection($servers)]);
+});
+
+Route::get('/v1/delete-deploy-server', function(Request $request) {
+    $ids = $request->ids;
+
+    foreach($ids as $id) {
+        $server = DeployServer::find($id);
+        $server->delete();
+    }
+
+    return response()->json(['status' => 'success']);
 });
 
 require_once base_path('app/Modules/Auth/Routes/api.php');
