@@ -11,8 +11,12 @@ use Symfony\Component\HttpFoundation\Response;
 class DeployController extends Controller
 {
     public function deploy($os) {
-        logger($os);
+        ini_set('max_execution_time', 0); // No time limit
+        ini_set('memory_limit', '-1');   // Unlimited memory
+
+        // logger($os);
         // $scriptPath = $os == 'Ubuntu' ? '/home/ken/Documents/scripts/linux.sh' : '/home/ken/Documents/scripts/window.sh';
+        // sleep(600);
         $scriptPath = $os == 'Ubuntu' ? '/home/itg/linux_vm.sh' : '/home/itg/window_vm.sh';
         try {
             // Initialize and configure the process
