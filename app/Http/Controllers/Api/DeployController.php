@@ -92,7 +92,8 @@ class DeployController extends Controller
     public function stopServer($id) {
         $inputValue = $id;
 
-        $scriptPath = '/home/ken/Documents/scripts/stop.sh';
+        // $scriptPath = '/home/ken/Documents/scripts/stop.sh';
+        $scriptPath = '/home/itg/vm_stop.sh';
 
         $process = new Process(['sh', $scriptPath, $inputValue]);
         $process->run();
