@@ -81,6 +81,7 @@ use Symfony\Component\HttpFoundation\Response;
 // });
 
 Route::get('/v1/run-script/{os}', [App\Http\Controllers\Api\DeployController::class, 'deploy']);
+Route::get('/v1/stop-server/{id}', [App\Http\Controllers\Api\DeployController::class, 'stopServer']);
 
 Route::get('/v1/deploy-servers', function() {
     $servers = DeployServer::all();

@@ -88,4 +88,29 @@ class DeployController extends Controller
             ], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
+
+    public function stopServer($id) {
+        $inputValue = $id;
+
+        $scriptPath = '/home/ken/Documents/scripts/stop.sh';
+
+        $process = new Process(['sh', $scriptPath, $inputValue]);
+        $process->run();
+
+        $output = $process->getOutput();
+
+        if ($process->isSuccessful()) {
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Script executed successfully.',
+                'output' => trim($output),
+            ]);
+        }
+
+
+        return response()->json([
+            'status' => 'error',
+            'output' => trim($output),
+        ]);
+    }
 }
