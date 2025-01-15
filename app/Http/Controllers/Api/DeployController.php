@@ -12,9 +12,9 @@ class DeployController extends Controller
 {
 
     public function getServerStatus() {
-        $scriptPath = '/home/ken/Documents/scripts/status.sh';
+        // $scriptPath = '/home/ken/Documents/scripts/status.sh';
         // sleep(600);
-        // $scriptPath = $os == 'Ubuntu' ? '/home/itg/linux_vm.sh' : '/home/itg/window_vm.sh';
+        $scriptPath = '/home/itg/vm_status.sh';
         try {
             // Initialize and configure the process
             $process = new Process(['sh', $scriptPath]);
@@ -210,8 +210,8 @@ class DeployController extends Controller
     public function restartServer($id) {
         $server = DeployServer::find($id);
 
-        $scriptPath = '/home/ken/Documents/scripts/restart.sh';
-        // $scriptPath = '/home/itg/vm_stop.sh';
+        // $scriptPath = '/home/ken/Documents/scripts/restart.sh';
+        $scriptPath = '/home/itg/vm_restart.sh';
 
         $process = new Process(['sh', $scriptPath, $server->vm_id]);
         $process->run();
