@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Modules\ServerManagement\Location\Resources;
+namespace App\Modules\ServerManagement\Services\Resources;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class LocationResource extends JsonResource
+class ServiceResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -17,9 +17,10 @@ class LocationResource extends JsonResource
         return [
             'id' => $this->id,
             'name' => $this->name,
-            'image' => $this->image ? asset('storage' . $this->image) : asset('default.jpg'),
-            'status' => $this->status,
-            'checked' => false
+            'category' => $this->whenLoaded('category', fn() => $this->category->name),
+            'service_category_id' => $this->service_category_id,
+            'description' => $this->description,
+            'link' => $this->link
         ];
     }
 }

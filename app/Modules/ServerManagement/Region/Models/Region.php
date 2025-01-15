@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Modules\ServerManagement\Location\Models;
+namespace App\Modules\ServerManagement\Region\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Location extends Model
+class Region extends Model
 {
     use HasFactory;
 }

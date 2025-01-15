@@ -146,6 +146,5 @@ class OperationSystemController extends Controller
             DB::rollBack();
             return response()->json(['status' => 'error', 'message' => $e->getMessage()]);
         }
-
     }
 }

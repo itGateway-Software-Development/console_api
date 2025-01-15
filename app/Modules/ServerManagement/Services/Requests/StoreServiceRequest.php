@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Modules\ServerManagement\Location\Requests;
+namespace App\Modules\ServerManagement\Services\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class UpdateLocationRequest extends FormRequest
+class StoreServiceRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -23,6 +23,8 @@ class UpdateLocationRequest extends FormRequest
     {
         return [
             'name' => 'required',
+            'service_category_id' => 'required',
+            'link' => 'required'
         ];
     }
 }

@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Modules\ServerManagement\Location\Requests;
+namespace App\Modules\ServerManagement\Region\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class StoreLocationRequest extends FormRequest
+class StoreRegionRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.

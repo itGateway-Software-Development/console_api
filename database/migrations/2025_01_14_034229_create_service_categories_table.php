@@ -11,12 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('deploy_servers', function (Blueprint $table) {
+        Schema::create('service_categories', function (Blueprint $table) {
             $table->id();
-            $table->string('vm_id');
-            $table->string('server_type');
-            $table->string('ip');
-            $table->string('server_status');
+            $table->string('name');
+            $table->string('slug')->unique();
+            $table->string('image')->nullable();
             $table->timestamps();
         });
     }
@@ -26,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('deploy_servers');
+        Schema::dropIfExists('service_categories');
     }
 };

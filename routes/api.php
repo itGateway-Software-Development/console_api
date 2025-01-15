@@ -80,13 +80,15 @@ use Symfony\Component\HttpFoundation\Response;
 //     }
 // });
 
-Route::get('/v1/run-script/{os}', [App\Http\Controllers\Api\DeployController::class, 'deploy']);
-Route::get('/v1/stop-server/{id}', [App\Http\Controllers\Api\DeployController::class, 'stopServer']);
+Route::get('/v1/run-script/{os}/{password}', [App\Http\Controllers\Api\DeployController::class, 'deploy']);
+Route::get('/v1/shutdown-server/{id}', [App\Http\Controllers\Api\DeployController::class, 'shutdownServer']);
+Route::get('/v1/restart-server/{id}', [App\Http\Controllers\Api\DeployController::class, 'restartServer']);
+Route::get('/v1/get-server-status', [App\Http\Controllers\Api\DeployController::class, 'getServerStatus']);
 
 Route::get('/v1/deploy-servers', function() {
     $servers = DeployServer::all();
 
-    return response()->json(['status' => 'success', 'deploy_servers' => DeployServerResource::collection($servers)]);
+    return response()->json(['status' => 'success', 'servers' => DeployServerResource::collection($servers)]);
 });
 
 Route::get('/v1/delete-deploy-server', function(Request $request) {
@@ -102,6 +104,6 @@ Route::get('/v1/delete-deploy-server', function(Request $request) {
 
 require_once base_path('app/Modules/Auth/Routes/api.php');
 require_once base_path('app/Modules/UserProfile/Routes/api.php');
-require_once base_path('app/Modules/ServerManagement/Location/Routes/api.php');
+require_once base_path('app/Modules/ServerManagement/ServerManagementRoutes.php');
 require_once base_path('app/Modules/ServerManagement/ServerTypes/Routes/api.php');
 require_once base_path('app/Modules/ServerManagement/OperationSystems/Routes/api.php');
