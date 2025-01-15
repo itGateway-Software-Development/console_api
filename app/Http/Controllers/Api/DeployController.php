@@ -207,6 +207,42 @@ class DeployController extends Controller
 
     }
 
+    public function deleteServer($id) {
+        $sever = DeployServer::find($id);
+
+        // $scriptPath = '/home/ken/Documents/scripts/shutdown.sh';
+        $scriptPath = '/home/itg/vm_delete.sh';
+
+        $process = new Process(['sh', $scriptPath, $sever->vm_id]);
+        $process->run();
+
+        $output = $process->getOutput();
+
+        if ($process->isSuccessful()) {
+            $output = $process->getOutput();
+
+            $deployServer = DeployServer::where('id', $id)->delete();
+
+                    return response()->json([
+                        'status' => 'success',
+                        // 'data' => $data,
+                        'output' => $output,
+                        'message' => 'Script executed successfully and values retrieved.',
+                    ], Response::HTTP_OK);
+
+        } else {
+            // Handle process execution failure
+            $errorOutput = $process->getErrorOutput();
+            logger('Script error: ' . $errorOutput);
+
+            return response()->json([
+                'status' => 'error',
+                'error' => $errorOutput,
+                'message' => 'Script execution failed.'
+            ], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
+
     public function restartServer($id) {
         $server = DeployServer::find($id);
 
@@ -228,7 +264,7 @@ class DeployController extends Controller
                    sleep(5);
 
                     return response()->json([
-                        'status' => $data['status'],
+                        'status' => 'success',
                         // 'data' => $data,
                         'output' => $output,
                         'message' => 'Script executed successfully and values retrieved.',

@@ -83,6 +83,7 @@ use Symfony\Component\HttpFoundation\Response;
 Route::get('/v1/run-script/{os}/{password}', [App\Http\Controllers\Api\DeployController::class, 'deploy']);
 Route::get('/v1/shutdown-server/{id}', [App\Http\Controllers\Api\DeployController::class, 'shutdownServer']);
 Route::get('/v1/restart-server/{id}', [App\Http\Controllers\Api\DeployController::class, 'restartServer']);
+Route::get('/v1/delete-server/{id}', [App\Http\Controllers\Api\DeployController::class, 'deleteServer']);
 Route::get('/v1/get-server-status', [App\Http\Controllers\Api\DeployController::class, 'getServerStatus']);
 
 Route::get('/v1/deploy-servers', function() {
