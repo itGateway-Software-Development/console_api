@@ -172,7 +172,7 @@ class DeployController extends Controller
         $sever = DeployServer::find($id);
 
         // $scriptPath = '/home/ken/Documents/scripts/shutdown.sh';
-        $scriptPath = '/home/itg/vm_stop.sh';
+        $scriptPath = $sever->server_status == "Running" ? '/home/itg/vm_stop.sh' : '/home/itg/vm_start.sh';
 
         $process = new Process(['sh', $scriptPath, $sever->vm_id]);
         $process->run();
