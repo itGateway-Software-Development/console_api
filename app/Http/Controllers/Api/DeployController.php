@@ -182,29 +182,16 @@ class DeployController extends Controller
         if ($process->isSuccessful()) {
             $output = $process->getOutput();
 
-            if (preg_match('/\{.*\}$/s', $output, $matches)) {
-                $data = json_decode($matches[0], true);
-                if ($data && isset($data['status'])) {
-
-                    $deployServer = DeployServer::find($id);
+            $deployServer = DeployServer::find($id);
                     $deployServer->server_status = $deployServer->server_status == "Running" ? "Stopped" : "Running";
                     $deployServer->save();
 
                     return response()->json([
-                        'status' => $data['status'],
+                        'status' => 'success',
                         // 'data' => $data,
                         'output' => $output,
                         'message' => 'Script executed successfully and values retrieved.',
                     ], Response::HTTP_OK);
-                }
-            }
-
-            // If JSON parsing fails, return the raw output for debugging
-            return response()->json([
-                'status' => 'error',
-                'output' => $output,
-                'message' => 'Failed to parse script output. Ensure the script returns valid JSON.'
-            ]);
 
         } else {
             // Handle process execution failure
