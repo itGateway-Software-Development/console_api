@@ -28,6 +28,8 @@ class DeployController extends Controller
 
                 $status_responses = json_decode($output);
 
+                return $status_responses;
+
                 foreach ($status_responses as $status_response) {
 
                     if (isset($status_response->vm_id) && isset($status_response->status)) {
