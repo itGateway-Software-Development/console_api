@@ -28,7 +28,7 @@ class DeployController extends Controller
 
                 $status_responses = json_decode($output);
 
-                return $status_responses;
+                return $output;
 
                 foreach ($status_responses as $status_response) {
 
