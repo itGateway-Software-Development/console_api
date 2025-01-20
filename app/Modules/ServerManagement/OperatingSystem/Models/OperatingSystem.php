@@ -1,14 +1,13 @@
 <?php
 
-namespace App\Modules\ServerManagement\ServerTypes\Models;
+namespace App\Modules\ServerManagement\OperatingSystem\Models;
 
 use Spatie\Sluggable\HasSlug;
 use Spatie\Sluggable\SlugOptions;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use App\Modules\ServerManagement\OperationSystems\Models\OperationSystem;
 
-class ServerType extends Model
+class OperatingSystem extends Model
 {
     use HasFactory, HasSlug;
 
@@ -17,9 +16,5 @@ class ServerType extends Model
         return SlugOptions::create()
             ->generateSlugsFrom('name')
             ->saveSlugsTo('slug');
-    }
-
-    public function operationSystems() {
-        return $this->belongsToMany(OperationSystem::class);
     }
 }

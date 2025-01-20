@@ -11,12 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('server_types', function (Blueprint $table) {
+        Schema::create('operating_systems', function (Blueprint $table) {
             $table->id();
-            $table->string('name', 150);
-            $table->string('slug', 400);
-            $table->enum('status', [0, 1])->default(1);
-            $table->softDeletes();
+            $table->string('name');
+            $table->string('slug')->unique();
+            $table->string('image')->nullable();
+            $table->string('type');
             $table->timestamps();
         });
     }
@@ -26,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('server_types');
+        Schema::dropIfExists('operating_systems');
     }
 };

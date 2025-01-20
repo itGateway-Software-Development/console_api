@@ -14,8 +14,10 @@ return new class extends Migration
         Schema::create('deploy_servers', function (Blueprint $table) {
             $table->id();
             $table->string('vm_id');
+            $table->string('server_name');
             $table->string('server_type');
             $table->string('ip');
+            $table->string('password');
             $table->string('server_status');
             $table->timestamps();
         });

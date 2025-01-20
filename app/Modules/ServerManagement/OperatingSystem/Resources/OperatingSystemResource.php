@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Modules\ServerManagement\ServerTypes\Resources;
+namespace App\Modules\ServerManagement\OperatingSystem\Resources;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class ServerTypeResource extends JsonResource
+class OperatingSystemResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -17,8 +17,8 @@ class ServerTypeResource extends JsonResource
         return [
             'id' => $this->id,
             'name' => $this->name,
-            'status' => $this->status,
-            'checked' => false
+            'image' => $this->image ? asset('storage' . $this->image) : asset('default.jpg'),
+            'type' => $this->type
         ];
     }
 }

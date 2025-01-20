@@ -26,36 +26,33 @@ class DeployController extends Controller
             if ($process->isSuccessful()) {
                 $output = $process->getOutput();
 
-                return json_decode($output);
+                $status_responses = json_decode($output);
 
-                if (preg_match('/\{.*\}$/s', $output, $matches)) {
-                    $data = json_decode($matches[0], true);
-                    if ($data && isset($data['server_status'], $data['ip_address'], $data['server_type'])) {
-                        $deployServer = new DeployServer();
-                        $deployServer->vm_id = $data['vm_id'];
-                        $deployServer->server_type = $data['server_type'];
-                        $deployServer->server_status = $data['server_status'] == "status: running" ? "Running" : "Stopped";
-                        $deployServer->ip = $data['ip_address'];
-                        $deployServer->save();
+                foreach ($status_responses as $status_response) {
 
-                        return response()->json([
-                            'status' => 'success',
-                            'server_status' => $data['server_status'],
-                            'ip_address' => $data['ip_address'],
-                            'server_type' => $data['server_type'],
-                            // 'data' => $data,
-                            // 'output' => $output,
-                            'message' => 'Script executed successfully and values retrieved.',
-                        ], Response::HTTP_OK);
+                    if (isset($status_response->vm_id) && isset($status_response->status)) {
+                        $deployServer = DeployServer::where('vm_id', $status_response->vm_id)->first();
+
+                        if ($deployServer) {
+                            $normalizedStatus = strtolower($status_response->status);
+                            logger($normalizedStatus);
+
+                            if ($normalizedStatus === '0' || $normalizedStatus === 'stop') {
+                                $deployServer->server_status = 'Stopped';
+                            } else {
+                                $deployServer->server_status = 'Running';
+                            }
+
+                            $deployServer->update();
+                        }
+                    } else {
+                        // Log if required fields are missing
+                        logger('Missing vm_id or status in response: ' . json_encode($status_response));
                     }
                 }
 
-                // If JSON parsing fails, return the raw output for debugging
-                return response()->json([
-                    'status' => 'error',
-                    'output' => $output,
-                    'message' => 'Failed to parse script output. Ensure the script returns valid JSON.'
-                ]);
+                return response()->json(['status' => 'success']);
+
 
             } else {
                 // Handle process execution failure
@@ -87,7 +84,7 @@ class DeployController extends Controller
             ], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
-    public function deploy($os, $password ) {
+    public function deploy($os, $password, $server_name ) {
         ini_set('max_execution_time', 0); // No time limit
         ini_set('memory_limit', '-1');   // Unlimited memory
         set_time_limit(1200);
@@ -113,6 +110,8 @@ class DeployController extends Controller
                         $deployServer = new DeployServer();
                         $deployServer->vm_id = $data['vm_id'];
                         $deployServer->server_type = $data['server_type'];
+                        $deployServer->server_name = $server_name;
+                        $deployServer->password = $password;
                         $deployServer->server_status = $data['server_status'] == "status: running" ? "Running" : "Stopped";
                         $deployServer->ip = $data['ip_address'];
                         $deployServer->save();

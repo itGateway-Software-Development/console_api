@@ -1,7 +1,8 @@
 <?php
 
-use App\Modules\ServerManagement\Services\Controllers\Api\V1\ServiceController;
 use Illuminate\Support\Facades\Route;
+use App\Modules\ServerManagement\OperatingSystem\Controllers\Api\V1\OperatingSystemController;
+use App\Modules\ServerManagement\Services\Controllers\Api\V1\ServiceController;
 use App\Modules\ServerManagement\Region\Controllers\Api\V1\RegionController;
 use App\Modules\ServerManagement\ServiceCategory\Controllers\Api\V1\ServiceCategoryController;
 
@@ -21,4 +22,9 @@ Route::group(['middleware' => ['auth:sanctum'], 'prefix' => 'v1'], function() {
     Route::post('update-service/{service}', [ServiceController::class, 'updateService']);
     Route::post('del/multi-services', [ServiceController::class, 'destroyMultiServices']);
     Route::resource('services', ServiceController::class);
+
+    // operating system
+    Route::post('update-operating-systems/{operating_system}', [OperatingSystemController::class, 'updateOS']);
+    Route::post('del/multi-operating-systems', [OperatingSystemController::class, 'destroyMultiOS']);
+    Route::resource('operating-systems', OperatingSystemController::class);
 });

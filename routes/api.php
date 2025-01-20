@@ -80,7 +80,7 @@ use Symfony\Component\HttpFoundation\Response;
 //     }
 // });
 
-Route::get('/v1/run-script/{os}/{password}', [App\Http\Controllers\Api\DeployController::class, 'deploy']);
+Route::get('/v1/run-script/{os}/{password}/{server_name}', [App\Http\Controllers\Api\DeployController::class, 'deploy']);
 Route::get('/v1/shutdown-server/{id}', [App\Http\Controllers\Api\DeployController::class, 'shutdownServer']);
 Route::get('/v1/restart-server/{id}', [App\Http\Controllers\Api\DeployController::class, 'restartServer']);
 Route::get('/v1/delete-server/{id}', [App\Http\Controllers\Api\DeployController::class, 'deleteServer']);
@@ -106,5 +106,3 @@ Route::get('/v1/delete-deploy-server', function(Request $request) {
 require_once base_path('app/Modules/Auth/Routes/api.php');
 require_once base_path('app/Modules/UserProfile/Routes/api.php');
 require_once base_path('app/Modules/ServerManagement/ServerManagementRoutes.php');
-require_once base_path('app/Modules/ServerManagement/ServerTypes/Routes/api.php');
-require_once base_path('app/Modules/ServerManagement/OperationSystems/Routes/api.php');

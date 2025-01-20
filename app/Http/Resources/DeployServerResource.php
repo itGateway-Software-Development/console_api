@@ -17,6 +17,7 @@ class DeployServerResource extends JsonResource
         return [
             'id' => $this->id,
             'ip' => $this->ip,
+            'server_name' => $this->server_name,
             'server_status' => $this->server_status,
             'server_type' => $this->server_type,
             'checked' => false

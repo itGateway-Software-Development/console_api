@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Modules\ServerManagement\OperationSystems\Requests;
+namespace App\Modules\ServerManagement\OperatingSystem\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class StoreOperationSystemRequest extends FormRequest
+class UpdateOperatingSystemRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -23,7 +23,7 @@ class StoreOperationSystemRequest extends FormRequest
     {
         return [
             'name' => 'required',
-            'server_types' => 'required'
+            'type' => 'required'
         ];
     }
 }
