@@ -262,6 +262,9 @@ class DeployController extends Controller
                     $data = json_decode($matches[0], true);
                     if ($data && $data['ip_address']) {
 
+                        $server->ip = $data['ip_address'];
+                        $server->update();
+
                         return response()->json([
                             'status' => 'success',
                             'ip_address' => $data['ip_address'],
