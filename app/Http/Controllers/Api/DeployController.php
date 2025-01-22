@@ -256,7 +256,9 @@ class DeployController extends Controller
         $output = $process->getOutput();
 
         if ($process->isSuccessful()) {
-            $output = $process->getOutput();
+            $output = json_encode($process->getOutput());
+
+            return $output;
 
             if(json_decode($output) && json_decode($output) == "success") {
                 sleep(5);
