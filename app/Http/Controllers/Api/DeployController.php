@@ -256,20 +256,22 @@ class DeployController extends Controller
         $output = $process->getOutput();
 
         if ($process->isSuccessful()) {
-            $output = json_encode($process->getOutput());
+            $output = $process->getOutput();
 
-            return $output;
+                if (preg_match('/\{.*\}$/s', $output, $matches)) {
+                    $data = json_decode($matches[0], true);
+                    if ($data && $data['ip_address']) {
 
-            if(json_decode($output) && json_decode($output) == "success") {
-                sleep(5);
-
-                    return response()->json([
-                        'status' => 'success',
-                        // 'data' => $data,
-                        'output' => $output,
-                        'message' => 'Script executed successfully and values retrieved.',
-                    ], Response::HTTP_OK);
-            }
+                        return response()->json([
+                            'status' => 'success',
+                            'ip_address' => $data['ip_address'],
+                            // 'data' => $data,
+                            // 'output' => $output,
+                            'current_server' => $server,
+                            'message' => 'Script executed successfully and values retrieved.',
+                        ], Response::HTTP_OK);
+                    }
+                }
 
             // If JSON parsing fails, return the raw output for debugging
             return response()->json([
