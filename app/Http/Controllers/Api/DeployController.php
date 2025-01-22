@@ -185,11 +185,11 @@ class DeployController extends Controller
 
                 if (preg_match('/\{.*\}$/s', $output, $matches)) {
                     $data = json_decode($matches[0], true);
-                    if ($data && $data['ip_address']) {
+                    if ($data) {
 
                         $deployServer = DeployServer::find($id);
                         $deployServer->server_status = $deployServer->server_status == "Running" ? "Stopped" : "Running";
-                        $deployServer->ip = $data['ip_address'];
+                        $deployServer->ip = $data['ip_address'] ?? $deployServer->ip;
                         $deployServer->save();
 
                         return response()->json([
@@ -201,12 +201,12 @@ class DeployController extends Controller
                     }
                 }
 
-            // If JSON parsing fails, return the raw output for debugging
-            return response()->json([
-                'status' => 'error',
-                'output' => $output,
-                'message' => 'Failed to parse script output. Ensure the script returns valid JSON.'
-            ]);
+                // If JSON parsing fails, return the raw output for debugging
+                return response()->json([
+                    'status' => 'error',
+                    'output' => $output,
+                    'message' => 'Failed to parse script output. Ensure the script returns valid JSON.'
+                ]);
 
         } else {
             // Handle process execution failure
